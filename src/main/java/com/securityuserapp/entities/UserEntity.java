@@ -52,4 +52,11 @@ public class UserEntity extends AuditableEntity {
 
     @Column(nullable = false)
     private boolean enabled = true;
+
+    public UserEntity(Long id, String username, String fullName, String email) {
+        this.id = id;
+        this.username = username;
+        this.fullName = fullName;
+        this.email = email;
+    }
 }
