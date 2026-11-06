@@ -1,5 +1,6 @@
 package com.securityuserapp.config;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -15,5 +16,10 @@ public class AppConfig {
     @Bean
     public AuditorAware<String> auditorAware() {
         return () -> Optional.of("system");
+    }
+
+    @Bean
+    ModelMapper getModelMapper() {
+        return new ModelMapper();
     }
 }
