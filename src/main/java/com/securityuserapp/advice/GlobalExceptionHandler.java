@@ -2,6 +2,7 @@ package com.securityuserapp.advice;
 
 import com.securityuserapp.exceptions.DuplicateUserException;
 import com.securityuserapp.exceptions.ResourceNotFoundException;
+import io.jsonwebtoken.JwtException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -10,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -113,7 +115,7 @@ public class GlobalExceptionHandler {
             Map<String, String> validationErrors) {
 
         ApiError body = new ApiError(
-                status.value(),
+                status,
                 status.getReasonPhrase(),
                 message,
                 validationErrors
@@ -121,4 +123,23 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.status(status).body(body);
     }
+
+
+    @ExceptionHandler(AuthenticationException.class)
+    public ResponseEntity<ApiError> handleAuthenticationException(
+            AuthenticationException ex) {
+
+        ApiError apiError = new ApiError(HttpStatus.UNAUTHORIZED,ex.getLocalizedMessage() );
+
+        return new ResponseEntity<>(apiError, HttpStatus.UNAUTHORIZED);
+    }
+
+    @ExceptionHandler(JwtException.class)
+    public ResponseEntity<ApiError> handleJwtException(JwtException ex) {
+
+        ApiError apiError = new ApiError(HttpStatus.UNAUTHORIZED,"Invalid or expired JWT token");
+
+        return new ResponseEntity<>(apiError, HttpStatus.UNAUTHORIZED);
+    }
+
 }
